@@ -13,12 +13,15 @@ export const GithubProvider = ({ children }) => {
   //instead of using  useState, we are using reducer and now need to initial state to store our users from API
   const initialState = {
     users: [],
-    loading: true,
+    loading: false,
   };
 
   const [state, dispatch] = useReducer(githubReducer, initialState); //reducer hook take to arguments (created reducer and initialized state)
 
+  // 'fetchUsers' function for testing purposes (not using in main version)
   const fetchUsers = async () => {
+    setLoading()
+
     const response = await fetch(`${GITHUB_URL}/users`, {
       headers: {
         Authorization: `token ${GITHUB_TOKEN}`,
@@ -33,6 +36,13 @@ export const GithubProvider = ({ children }) => {
       payload: data,
     });
   };
+
+  //set loading function 
+  const setLoading = () =>{
+    dispatch({
+      type: "SET_LOADING"
+    })
+  }
 
   //returning data of context and give variables and functiones in value={} field
   return (

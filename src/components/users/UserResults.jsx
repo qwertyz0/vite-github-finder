@@ -5,11 +5,12 @@ import UserItem from "./UserItem";
 import GithubContext from "../../context/github/GithubContext";
 
 function UserResults() {
+  // remove useEfect with fetchUsers function (was for testing)
   const {fetchUsers, loading, users} = useContext(GithubContext)
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+  // useEffect(() => {
+  //   fetchUsers();
+  // }, []);
 
   if (!loading) {
     {
