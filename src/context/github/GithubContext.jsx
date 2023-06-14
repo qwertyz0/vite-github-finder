@@ -18,31 +18,47 @@ export const GithubProvider = ({ children }) => {
 
   const [state, dispatch] = useReducer(githubReducer, initialState); //reducer hook take to arguments (created reducer and initialized state)
 
-  // 'fetchUsers' function for testing purposes (not using in main version)
-  const fetchUsers = async () => {
-    setLoading()
+  //get search users function
+  const searchUsers = async (text) => {
+    setLoading();
 
-    const response = await fetch(`${GITHUB_URL}/users`, {
-      headers: {
-        Authorization: `token ${GITHUB_TOKEN}`,
-      },
+    // make query parameter with URLSearchParams to get (q=TEXT_WE_TYPE) from UserSearch.jsx search bar
+    const params = new URLSearchParams({
+      q: text,
     });
 
-    const data = await response.json();
+    const response = await fetch(
+      `${GITHUB_URL}/search/users?${params}` /*add /serch/ and query parameter dinamic */,
+      {
+        headers: {
+          Authorization: `token ${GITHUB_TOKEN}`,
+        },
+      }
+    );
+
+    //destructuring all geting data, to get all data in {items}
+    const { items } = await response.json();
 
     // dispatching action with type and payload data
     dispatch({
       type: "GET_USERS",
-      payload: data,
+      payload: items /* use destruct items instead of data*/,
     });
   };
 
-  //set loading function 
-  const setLoading = () =>{
+  //set loading function
+  const setLoading = () => {
     dispatch({
-      type: "SET_LOADING"
-    })
-  }
+      type: "SET_LOADING",
+    });
+  };
+
+  //clear profile state function
+  const clearUsers = () => {
+    dispatch({
+      type: "CLEAR_USERS",
+    });
+  };
 
   //returning data of context and give variables and functiones in value={} field
   return (
@@ -50,7 +66,8 @@ export const GithubProvider = ({ children }) => {
       value={{
         users: state.users, //fetching users data from reducer state
         loading: state.loading, //loading variable from reducer state
-        fetchUsers: fetchUsers, //fetching function
+        searchUsers: searchUsers, //searching function
+        clearUsers: clearUsers, //clear users
       }}
     >
       {children}
@@ -59,3 +76,22 @@ export const GithubProvider = ({ children }) => {
 };
 
 export default GithubContext;
+
+// 'fetchUsers' function for testing purposes (not using in main version)
+// const fetchUsers = async () => {
+//   setLoading()
+
+//   const response = await fetch(`${GITHUB_URL}/users`, {
+//     headers: {
+//       Authorization: `token ${GITHUB_TOKEN}`,
+//     },
+//   });
+
+//   const data = await response.json();
+
+//   // dispatching action with type and payload data
+//   dispatch({
+//     type: "GET_USERS",
+//     payload: data,
+//   });
+// };
