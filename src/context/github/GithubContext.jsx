@@ -13,6 +13,7 @@ export const GithubProvider = ({ children }) => {
   //instead of using  useState, we are using reducer and now need to initial state to store our users from API
   const initialState = {
     users: [],
+    user: {},
     loading: false,
   };
 
@@ -46,6 +47,30 @@ export const GithubProvider = ({ children }) => {
     });
   };
 
+  //get user (single)
+  const getUser = async (login) => {
+    setLoading();
+
+    const response = await fetch(`${GITHUB_URL}/users/${login}`, {
+      headers: {
+        Authorization: `token ${GITHUB_TOKEN}`,
+      },
+    });
+
+    if (response.status === 404) {
+      window.location = "/notfound"; //redirect if user 404
+    } else {
+      //destructuring all geting data, to get all data in {items}
+      const data = await response.json();
+
+      // dispatching action for single user from data
+      dispatch({
+        type: "GET_USER",
+        payload: data,
+      });
+    }
+  };
+
   //set loading function
   const setLoading = () => {
     dispatch({
@@ -66,8 +91,10 @@ export const GithubProvider = ({ children }) => {
       value={{
         users: state.users, //fetching users data from reducer state
         loading: state.loading, //loading variable from reducer state
+        user: state.user, //user object from reducer (initial state)
         searchUsers: searchUsers, //searching function
         clearUsers: clearUsers, //clear users
+        getUser: getUser, //geting single user info function
       }}
     >
       {children}
