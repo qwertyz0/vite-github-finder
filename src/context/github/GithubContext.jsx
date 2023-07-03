@@ -14,6 +14,7 @@ export const GithubProvider = ({ children }) => {
   const initialState = {
     users: [],
     user: {},
+    repos: [],
     loading: false,
   };
 
@@ -71,6 +72,35 @@ export const GithubProvider = ({ children }) => {
     }
   };
 
+  //get repositories of user
+  const getUserRepos = async (login) => {
+    setLoading();
+
+    // make query parameter with URLSearchParams to get (sort=LAST_CREATED) and only 10
+    const params = new URLSearchParams({
+      sort: "created",
+      per_page: 10,
+    });
+
+    const response = await fetch(
+      `${GITHUB_URL}/users/${login}/repos?${params}` /*find repos of the user*/,
+      {
+        headers: {
+          Authorization: `token ${GITHUB_TOKEN}`,
+        },
+      }
+    );
+
+    //getinag all repos as data
+    const data = await response.json();
+
+    // dispatching action with type and payload data
+    dispatch({
+      type: "GET_REPOS",
+      payload: data,
+    });
+  };
+
   //set loading function
   const setLoading = () => {
     dispatch({
@@ -92,9 +122,11 @@ export const GithubProvider = ({ children }) => {
         users: state.users, //fetching users data from reducer state
         loading: state.loading, //loading variable from reducer state
         user: state.user, //user object from reducer (initial state)
+        repos: state.repos, //list of repositories
         searchUsers: searchUsers, //searching function
         clearUsers: clearUsers, //clear users
         getUser: getUser, //geting single user info function
+        getUserRepos: getUserRepos, //function to fetch reposetories of user
       }}
     >
       {children}
