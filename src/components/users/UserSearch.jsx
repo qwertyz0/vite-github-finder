@@ -4,7 +4,7 @@ import AlertContext from "../../context/alert/AlertContext";
 import { searchUsers } from "../../context/github/GithubActions";
 
 function UserSearch() {
-  const { users, clearUsers, dispatch } = useContext(GithubContext); //github-context users data from reducer /now remove default searchUsers function from context and use it from GithubActions/, add dispatch function
+  const { users, dispatch } = useContext(GithubContext); //github-context users data from reducer /now remove default searchUsers function from context and use it from GithubActions/, add dispatch function, remove clear users
   const { setAlert } = useContext(AlertContext); //alert-context
 
   const [text, setText] = useState("");
@@ -29,7 +29,7 @@ function UserSearch() {
   };
 
   const handleClear = () => {
-    clearUsers();
+    dispatch({ type: "CLEAR_USERS" }); //refactoring clearUsers function
     setText("");
   };
 
