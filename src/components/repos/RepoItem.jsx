@@ -41,7 +41,7 @@ function RepoItem({ repo }) {
   );
 }
 
-RepoItem.PropTypes = {
+RepoItem.propTypes = {
   repo: PropTypes.object.isRequired,
 };
 
