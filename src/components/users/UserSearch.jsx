@@ -1,9 +1,10 @@
 import React, { useState, useContext } from "react";
 import GithubContext from "../../context/github/GithubContext";
 import AlertContext from "../../context/alert/AlertContext";
+import { searchUsers } from "../../context/github/GithubActions";
 
 function UserSearch() {
-  const { users, searchUsers, clearUsers } = useContext(GithubContext); //github-context users data from reducer
+  const { users, clearUsers, dispatch } = useContext(GithubContext); //github-context users data from reducer /now remove default searchUsers function from context and use it from GithubActions/, add dispatch function
   const { setAlert } = useContext(AlertContext); //alert-context
 
   const [text, setText] = useState("");
@@ -12,14 +13,16 @@ function UserSearch() {
     setText(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (text === "") {
       setAlert("Please enter something", "error");
     } else {
       // todo - serch users
-      searchUsers(text);
+      dispatch({ type: "SET_LOADING" });
+      const users = await searchUsers(text); //need to create variable for returning data from searchUsers (asyncron)
+      dispatch({ type: "GET_USERS", payload: users });
 
       setText("");
     }

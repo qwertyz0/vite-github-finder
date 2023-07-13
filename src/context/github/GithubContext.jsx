@@ -20,34 +20,6 @@ export const GithubProvider = ({ children }) => {
 
   const [state, dispatch] = useReducer(githubReducer, initialState); //reducer hook take to arguments (created reducer and initialized state)
 
-  //get search users function
-  const searchUsers = async (text) => {
-    setLoading();
-
-    // make query parameter with URLSearchParams to get (q=TEXT_WE_TYPE) from UserSearch.jsx search bar
-    const params = new URLSearchParams({
-      q: text,
-    });
-
-    const response = await fetch(
-      `${GITHUB_URL}/search/users?${params}` /*add /serch/ and query parameter dinamic */,
-      {
-        headers: {
-          Authorization: `token ${GITHUB_TOKEN}`,
-        },
-      }
-    );
-
-    //destructuring all geting data, to get all data in {items}
-    const { items } = await response.json();
-
-    // dispatching action with type and payload data
-    dispatch({
-      type: "GET_USERS",
-      payload: items /* use destruct items instead of data*/,
-    });
-  };
-
   //get user (single)
   const getUser = async (login) => {
     setLoading();
@@ -119,11 +91,9 @@ export const GithubProvider = ({ children }) => {
   return (
     <GithubContext.Provider
       value={{
-        users: state.users, //fetching users data from reducer state
-        loading: state.loading, //loading variable from reducer state
-        user: state.user, //user object from reducer (initial state)
-        repos: state.repos, //list of repositories
-        searchUsers: searchUsers, //searching function
+        ...state /*refactoring code  (//fetching users data from reducer state //loading variable from reducer state //user object from reducer (initial state) //list of repositories) all this wariables in state*/,
+        dispatch, //refactoring dispatch function from reducer
+        //searchUsers: searchUsers, //searching function (remove when refactoring)
         clearUsers: clearUsers, //clear users
         getUser: getUser, //geting single user info function
         getUserRepos: getUserRepos, //function to fetch reposetories of user

@@ -17,7 +17,7 @@ function RepoList({ repos }) {
   );
 }
 
-RepoList.PropTypes = {
+RepoList.propTypes = {
   repos: PropTypes.array.isRequired,
 };
 
