@@ -43,9 +43,14 @@ export const searchUsers = async (text) => {
 
 //get user and repos in one function
 export const getUserAndRepos = async (login) => {
+  // make query parameter with URLSearchParams to get (sort=LAST_CREATED) and only 10
+  const params = new URLSearchParams({
+    sort: "created",
+    per_page: 10,
+  });
   const [user, repos] = await Promise.all([
     github.get(`/users/${login}`),
-    github.get(`/users/${login}/repos`),
+    github.get(`/users/${login}/repos?${params}`),
   ]); // return data for both variable (user and repos) using promise
 
   return { user: user.data, repos: repos.data }; //destructurin from objects user and repos
